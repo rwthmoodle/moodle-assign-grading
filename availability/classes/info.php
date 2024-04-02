@@ -637,7 +637,12 @@ abstract class info {
             return $users;
         }
         $tree = $this->get_availability_tree();
-        $checker = new capability_checker($this->get_context());
+        static $checkers = [];
+        $context = $this->get_context();
+        if (!array_key_exists($context->id, $checkers)) {
+            $checkers[$context->id] = new capability_checker($context);
+        }
+        $checker = $checkers[$context->id];
 
         // Filter using availability tree.
         $this->modinfo = get_fast_modinfo($this->get_course());
